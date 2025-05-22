@@ -38,6 +38,10 @@ async function processData() {
     'GOD_and_CDK': [],
     'GOD_MIR_and_VAL': [],
     'GOD_MIR_VAL_and_CDK': [],
+    'Yeti': [],
+    'Gas': [],
+    'Leopard': [],
+    'Kitsune': [],
     'Other_Categories': []
   };
 
@@ -74,7 +78,10 @@ async function processData() {
     const password = idpassMap[id] || 'Password Not Found';
     const entry = `${id}:${password}`;
 
-    const hasGod = typeString.includes('GOD');
+    const hasGod = typeString.includes('GOD') ||
+                   line.includes('GOD [') ||
+                   line.includes(' [6]');
+
     const hasCdk = typeString.includes('CDK');
     const hasMir = typeString.includes('MIR');
     const hasVal = typeString.includes('VAL');
@@ -82,7 +89,15 @@ async function processData() {
 
     let assignedCategory = 'Other_Categories';
 
-    if (hasGod && hasCdk && hasMir && hasVal) {
+    if (cleanLine.includes('Yeti')) {
+      assignedCategory = 'Yeti';
+    } else if (cleanLine.includes('Gas')) {
+      assignedCategory = 'Gas';
+    } else if (cleanLine.includes('Leopard')) {
+      assignedCategory = 'Leopard';
+    } else if (cleanLine.includes('Kitsune')) {
+      assignedCategory = 'Kitsune';
+    } else if (hasGod && hasCdk && hasMir && hasVal) {
       assignedCategory = 'GOD_MIR_VAL_and_CDK';
     } else if (hasGod && hasMir && hasVal) {
       assignedCategory = 'GOD_MIR_and_VAL';
