@@ -58,11 +58,11 @@ async function processData() {
     if (styleMatch && styleMatch[1]) {
       const style = styleMatch[1].trim();
 
-      if (style === 'Nel Rin') {
+      if (style === 'NEL Rin') {
         assignedCategory = 'Style_Nel_Rin';
       } else if (style === 'Sae') {
         assignedCategory = 'Style_Sae';
-      } else if (style === 'Nel Isagi') {
+      } else if (style === 'NEL Isagi') {
         assignedCategory = 'Style_Nel_Isagi';
       } else if (style === 'Don Lorenzo') {
         assignedCategory = 'Style_Don_Lorenzo';
