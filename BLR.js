@@ -6,10 +6,12 @@ const inputFile = path.join(process.cwd(), 'data', 'input.txt');
 const idpassFile = path.join(process.cwd(), 'data', 'idpass.txt');
 const outputDir = path.join(process.cwd(), 'product_categories');
 
+// Create output directory if it doesn't exist
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
+// Read idpass.txt into a map for quick lookups
 const idpassMap = {};
 try {
   fs.readFileSync(idpassFile, 'utf8')
@@ -33,12 +35,14 @@ async function processData() {
     crlfDelay: Infinity
   });
 
+  // Define categories based on the new style filtering: "Kaiser", "Don Lorenzo", "NEL Rin", "Loki", "Sae", "NEL Isagi"
   const categories = {
-    'Style_Nel_Rin': [],
-    'Style_Sae': [],
-    'Style_Nel_Isagi': [],
-    'Style_Don_Lorenzo': [],
     'Style_Kaiser': [],
+    'Style_Don_Lorenzo': [],
+    'Style_NEL_Rin': [],
+    'Style_Loki': [],
+    'Style_Sae': [],
+    'Style_NEL_Isagi': [],
     'Other_Categories': []
   };
 
@@ -54,26 +58,30 @@ async function processData() {
 
     let assignedCategory = 'Other_Categories';
 
+    // Extract style information using regex to find "สไตล์ = [StyleName]"
     const styleMatch = cleanLine.match(/สไตล์\s*=\s*(.+?)(?=\s*\||$)/);
     if (styleMatch && styleMatch[1]) {
       const style = styleMatch[1].trim();
 
-      if (style === 'NEL Rin') {
-        assignedCategory = 'Style_Nel_Rin';
+      if (style === 'Kaiser') {
+        assignedCategory = 'Style_Kaiser';
+      } else if (style === 'Don Lorenzo') {
+        assignedCategory = 'Style_Don_Lorenzo';
+      } else if (style === 'NEL Rin') {
+        assignedCategory = 'Style_NEL_Rin';
+      } else if (style === 'Loki') {
+        assignedCategory = 'Style_Loki';
       } else if (style === 'Sae') {
         assignedCategory = 'Style_Sae';
       } else if (style === 'NEL Isagi') {
-        assignedCategory = 'Style_Nel_Isagi';
-      } else if (style === 'Don Lorenzo') {
-        assignedCategory = 'Style_Don_Lorenzo';
-      } else if (style === 'Kaiser') {
-        assignedCategory = 'Style_Kaiser';
+        assignedCategory = 'Style_NEL_Isagi';
       }
     }
     
     categories[assignedCategory].push(entry);
   }
 
+  // Write categorized data to respective files
   for (const categoryName in categories) {
     if (categories[categoryName].length > 0) {
       const outputFileName = path.join(outputDir, `${categoryName}.txt`);
