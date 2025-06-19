@@ -40,7 +40,6 @@ async function processData() {
     'GOD_MIR_VAL_and_CDK': [],
     'Yeti': [],
     'Gas': [],
-    'Leopard': [],
     'Kitsune': [],
     'Other_Categories': []
   };
@@ -93,8 +92,6 @@ async function processData() {
       assignedCategory = 'Yeti';
     } else if (cleanLine.includes('Gas')) {
       assignedCategory = 'Gas';
-    } else if (cleanLine.includes('Leopard')) {
-      assignedCategory = 'Leopard';
     } else if (cleanLine.includes('Kitsune')) {
       assignedCategory = 'Kitsune';
     } else if (hasGod && hasCdk && hasMir && hasVal) {
