@@ -4,7 +4,11 @@ const path = require('path');
 
 const inputFile = path.join(process.cwd(), 'data', 'input.txt');
 const idpassFile = path.join(process.cwd(), 'data', 'idpass.txt');
-const outputFile = path.join(process.cwd(), 'result.txt');
+const outputDir = path.join(process.cwd(), 'product_categories');
+
+if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+}
 
 const idpassMap = {};
 try {
@@ -27,7 +31,11 @@ async function processData() {
         crlfDelay: Infinity
     });
 
-    const filteredEntries = [];
+    const categories = {
+        '10k': [],
+        '20k': [],
+        '30k': []
+    };
 
     try {
         for await (const line of rl) {
@@ -43,8 +51,14 @@ async function processData() {
             const bondsMatch = line.match(/Bonds:\s*(\d+)/);
             const bonds = bondsMatch ? parseInt(bondsMatch[1], 10) : 0;
 
+            const entry = `${id}:${password}`;
+
             if (bonds >= 10000 && bonds <= 20000) {
-                filteredEntries.push(`${id}:${password}`);
+                categories['10k'].push(entry);
+            } else if (bonds >= 20001 && bonds <= 30000) {
+                categories['20k'].push(entry);
+            } else if (bonds > 30000) {
+                categories['30k'].push(entry);
             }
         }
     } catch (error) {
@@ -52,13 +66,18 @@ async function processData() {
         process.exit(1);
     }
 
-    try {
-        fs.writeFileSync(outputFile, filteredEntries.join('\n'), 'utf8');
-        console.log(`✅ Done. Results written to ${outputFile}`);
-    } catch (error) {
-        console.error(`Error writing to ${outputFile}:`, error.message);
-        process.exit(1);
+    for (const categoryName in categories) {
+        if (categories[categoryName].length > 0) {
+            const outputFileName = path.join(outputDir, `${categoryName}.txt`);
+            try {
+                fs.writeFileSync(outputFileName, categories[categoryName].join('\n'), 'utf8');
+                console.log(`✅ Results for ${categoryName} written to ${outputFileName}`);
+            } catch (error) {
+                console.error(`Error writing to ${outputFileName}:`, error.message);
+            }
+        }
     }
+    console.log('✅ Processing complete. Results written to product_categories directory.');
     rl.close();
 }
 
